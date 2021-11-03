@@ -28,7 +28,7 @@ def register():
         return jsonify({'error': "Email is not valid"}), HTTP_400_BAD_REQUEST
 
     if User.query.filter_by(email=email).first() is not None:
-        return jsonify({'error': "Email is taken"}), HTTP_409_CONFLICT
+        return jsonify({'error': "Email is taken oh"}), HTTP_409_CONFLICT
 
     if User.query.filter_by(username=username).first() is not None:
         return jsonify({'error': "username is taken"}), HTTP_409_CONFLICT
