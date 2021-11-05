@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 import validators
-from src.database import User, db
+from src.database import User, db, user_schema, users_schema
 from src.constant.http_status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
 from flasgger import swag_from
@@ -39,13 +39,15 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({
-        'message': "User created",
-        'user': {
-            'username': username, "email": email
-        }
+    return user_schema.jsonify(user), HTTP_201_CREATED
 
-    }), HTTP_201_CREATED
+    # return jsonify({
+    #     'message': "User created",
+    #     'user': {
+    #         'username': username, "email": email
+    #     }
+
+    # }), HTTP_201_CREATED
 
 
 @auth.post("/login")

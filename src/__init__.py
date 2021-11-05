@@ -2,7 +2,7 @@ from flask import Flask, redirect
 import os
 from src.auth import auth
 from src.bookmarks import bookmarks
-from src.database import db, Bookmark
+from src.database import db, Bookmark, ma
 from flask_jwt_extended import JWTManager
 from src.constant.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from flasgger import Swagger, swag_from
@@ -15,8 +15,9 @@ def create_app(test_config=None):
 
     if test_config is None:
         app.config.from_mapping(
+            DATABASE_URL=os.environ.get("DATABASE_URL"),
             SECRET_KEY=os.environ.get("SECRET_KEY"), 
-            SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"), 
+            # SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"), 
             SQLALCHEMY_TRACK_MODIFICATIONS=False, 
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'), 
             SWAGGER={
@@ -32,6 +33,8 @@ def create_app(test_config=None):
     db.init_app(app)
     app.register_blueprint(auth)
     app.register_blueprint(bookmarks)
+    ma.app = app
+    ma.init_app(app)
 
     Swagger(app, config=swagger_config, template=template)
 
