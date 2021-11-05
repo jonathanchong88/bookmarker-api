@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from datetime import datetime
 import string
 import random
 db = SQLAlchemy()
+ma = Marshmallow()
 
 
 class User(db.Model):
@@ -16,6 +18,17 @@ class User(db.Model):
 
     def __repr__(self) -> str:
         return 'User>>> {self.username}'
+
+
+# create user schema
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ['username', 'email']
+
+
+# create instance of schema
+user_schema = UserSchema(many=False)
+users_schema = UserSchema(many=True)
 
 
 class Bookmark(db.Model):
@@ -46,3 +59,15 @@ class Bookmark(db.Model):
 
     def __repr__(self) -> str:
         return 'Boomark>>> {self.url}'
+
+
+# create Bookmarks schema
+class BookmarksSchema(ma.Schema):
+    class Meta:
+        fields = ['id', 'body', 'url', 'short_url',
+                  'visits', 'user_id', 'created_at', 'updated_at']
+
+
+# create instance of schema
+bookmark_schema = BookmarksSchema(many=False)
+bookmarks_schema = BookmarksSchema(many=True)

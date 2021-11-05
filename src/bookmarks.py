@@ -3,7 +3,7 @@ from flask import Blueprint, request
 from flask.json import jsonify
 import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from src.database import Bookmark, db
+from src.database import Bookmark, db, bookmark_schema, bookmarks_schema
 from flasgger import swag_from
 
 bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
@@ -153,19 +153,21 @@ def editbookmark(id):
 @swag_from("./docs/bookmarks/stats.yaml")
 def get_stats():
     current_user = get_jwt_identity()
+   
 
-    data = []
-
+    # data = []
     items = Bookmark.query.filter_by(user_id=current_user).all()
 
-    for item in items:
-        new_link = {
-            'visits': item.visits,
-            'url': item.url,
-            'id': item.id,
-            'short_url': item.short_url,
-        }
+    return jsonify({'data': bookmarks_schema.dump(items)}), HTTP_200_OK
 
-        data.append(new_link)
+    # for item in items:
+    #     new_link = {
+    #         'visits': item.visits,
+    #         'url': item.url,
+    #         'id': item.id,
+    #         'short_url': item.short_url,
+    #     }
 
-    return jsonify({'data': data}), HTTP_200_OK
+    #     data.append(new_link)
+
+    # return jsonify({'data': data}), HTTP_200_OK
