@@ -1,12 +1,14 @@
 from flask import Flask, redirect
 import os
 from src.auth import auth
-from src.bookmarks import bookmarks
+# from src.bookmarks import bookmarks
+from src.database2 import db, ma
 from src.database import db, Bookmark, ma
 from flask_jwt_extended import JWTManager
 from src.constant.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from flasgger import Swagger, swag_from
 from src.config.swagger import template, swagger_config
+from flask_migrate import Migrate
 
 
 
@@ -16,7 +18,9 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"), 
-            SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL"),
+            # SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL"),
+            SQLALCHEMY_DATABASE_URI="postgresql://postgres:As5201314@localhost/postgres",
+            # SQLALCHEMY_DATABASE_URI="postgresql://nvaqwtbctrvhcd:2dcaef125c2cff007a7a0ab237dff2d891ead044e7ebc7c4c99e6994b5d7b724@ec2-35-169-49-157.compute-1.amazonaws.com:5432/drddv61fm0c69",
             SQLALCHEMY_TRACK_MODIFICATIONS=False, 
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'), 
             SWAGGER={
@@ -31,21 +35,26 @@ def create_app(test_config=None):
     db.app = app
     db.init_app(app)
     app.register_blueprint(auth)
-    app.register_blueprint(bookmarks)
+    # app.register_blueprint(bookmarks)
     ma.app = app
     ma.init_app(app)
 
+    migrate = Migrate(app, db)
+
+    # with app.app_context():
+    #     db.create_all()
+
     Swagger(app, config=swagger_config, template=template)
 
-    @app.get('/<short_url>')
-    @swag_from('./docs/short_url.yaml')
-    def redirect_to_url(short_url):
-        bookmark = Bookmark.query.filter_by(short_url=short_url).first_or_404()
+    # @app.get('/<short_url>')
+    # @swag_from('./docs/short_url.yaml')
+    # def redirect_to_url(short_url):
+    #     bookmark = Bookmark.query.filter_by(short_url=short_url).first_or_404()
 
-        if bookmark:
-            bookmark.visits = bookmark.visits+1
-            db.session.commit()
-            return redirect(bookmark.url)
+    #     if bookmark:
+    #         bookmark.visits = bookmark.visits+1
+    #         db.session.commit()
+    #         return redirect(bookmark.url)
 
     @app.errorhandler(HTTP_404_NOT_FOUND)
     def handle_404(e):
