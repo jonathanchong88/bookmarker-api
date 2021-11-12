@@ -3,7 +3,7 @@ import os
 from src.auth import auth
 # from src.bookmarks import bookmarks
 from src.database2 import db, ma
-from src.database import db, Bookmark, ma
+# from src.database import db, Bookmark, ma
 from flask_jwt_extended import JWTManager
 from src.constant.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from flasgger import Swagger, swag_from
