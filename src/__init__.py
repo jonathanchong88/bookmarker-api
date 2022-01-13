@@ -23,10 +23,8 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"), 
-            # SQLALCHEMY_DATABASE_URI=os.environ.get(
-            #     "DATABASE_URL").replace("://", "ql://", 1),
-            # SQLALCHEMY_DATABASE_URI="postgresql://postgres:As5201314@localhost/postgres",
-            SQLALCHEMY_DATABASE_URI="postgresql://nvaqwtbctrvhcd:2dcaef125c2cff007a7a0ab237dff2d891ead044e7ebc7c4c99e6994b5d7b724@ec2-35-169-49-157.compute-1.amazonaws.com:5432/drddv61fm0c69",
+            SQLALCHEMY_DATABASE_URI=os.environ.get(
+                "DATABASE_URL").replace("://", "ql://", 1),
             SQLALCHEMY_TRACK_MODIFICATIONS=False, 
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'), 
             SWAGGER={
