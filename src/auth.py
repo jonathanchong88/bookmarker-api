@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, url_for, render_template, redirect, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 import validators
 from src.database2 import Person, db, person_schema, persons_schema
@@ -7,13 +7,21 @@ from src.constant.http_status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_4
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
 from flasgger import swag_from
 # from src.google_storage import generate_upload_signed_url_v4
+from src.security import ts
+from src.email import send_email
+import pyotp 
+# import time
+import datetime
+from src.firebase_send_msg import send_to_token
+from src.test_send import test_send, test_send_invalid_token
 
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 @auth.post("/register")
 @swag_from('./docs/auth/register.yaml')
 def register():
-    # username=request.json['username']
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
     password = request.json['password']
     email = request.json['email']
 
@@ -37,19 +45,37 @@ def register():
 
     pwd_hash = generate_password_hash(password)
 
-    person = Person( password=pwd_hash, email=email, status='active')
+    person = Person(first_name=first_name, last_name=last_name, password=pwd_hash, email=email, status='active', confirmed=False)
     db.session.add(person)
     db.session.commit()
 
-    return person_schema.jsonify(person), HTTP_201_CREATED
+    # Now we'll send the email confirmation link
+    # subject = "Confirm your email"
 
-    # return jsonify({
-    #     'message': "User created",
-    #     'user': {
-    #         'username': username, "email": email
-    #     }
+    # token = ts.dumps(person.email, salt='email-confirm-key')
 
-    # }), HTTP_201_CREATED
+    # confirm_url = url_for(
+    #     'auth.confirm_email',
+    #     token=token,
+    #     _external=True)
+
+    # html = render_template(
+    #     'email/activate.html',
+    #     confirm_url=confirm_url)
+
+    # # We'll assume that send_email has been defined in myapp/util.py
+    # send_email(person.email, subject, html)
+   
+    # flash('A confirmation email has been sent via email.', 'success')
+
+    return jsonify({
+        'status': 0,
+        'message': "User created",
+        'data': {
+             "email": email
+        }
+
+    }), HTTP_201_CREATED
 
 
 @auth.post("/login")
@@ -57,6 +83,7 @@ def register():
 def login():
     email = request.json.get('email', '')
     password = request.json.get('password', '')
+    fcmToken = request.json.get('fcm_token', '')
 
     person = Person.query.filter_by(email=email).first()
 
@@ -64,11 +91,24 @@ def login():
         is_pass_correct = check_password_hash(person.password, password)
 
         if is_pass_correct:
+            expires = datetime.timedelta(minutes=60)
             refresh = create_refresh_token(identity=person.person_id)
-            access = create_access_token(identity=person.person_id)
+            access = create_access_token(
+                identity=person.person_id, expires_delta=expires)
+
+            #assign fcm token
+            if fcmToken:
+                print(fcmToken)
+                person.fcm_token = fcmToken
+                db.session.commit()
+
+            # test_send_invalid_token("LCMS APP", "Successfully login", {'score':'850'},
+            #                         person.fcm_token)
 
             return jsonify({
-                'person': {
+                'status': 0,
+                'message': "Successfully login",
+                'data': {
                     'refresh': refresh,
                     'access': access,
                     'email': person.email
@@ -77,6 +117,40 @@ def login():
             }), HTTP_200_OK
 
     return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+
+
+@auth.post("/social/login")
+# @swag_from('./docs/auth/register.yaml')
+def social_login():
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
+    password = request.json['password']
+    email = request.json['email']
+    fcmToken = request.json['fcm_token']
+
+    pwd_hash = generate_password_hash(password)
+
+    person = Person(first_name=first_name, last_name=last_name,
+                    password=pwd_hash, email=email, fcm_token=fcmToken,status='active', confirmed=True)
+    db.session.add(person)
+    db.session.commit()
+
+    expires = datetime.timedelta(minutes=60)
+    refresh = create_refresh_token(identity=person.person_id)
+    access = create_access_token(
+        identity=person.person_id, expires_delta=expires)
+
+    return jsonify({
+        'status': 0,
+        'message': "Successfully login",
+        'data': {
+            'refresh': refresh,
+            'access': access,
+            'email': person.email
+        }
+
+    }), HTTP_200_OK
+
 
 @auth.get("/me")
 @jwt_required()
@@ -115,5 +189,132 @@ def refresh_users_token():
     access = create_access_token(identity=identity)
 
     return jsonify({
-        'access': access
+        'data': {
+             'access': access
+        }
+       
+    }), HTTP_200_OK
+
+
+@auth.get('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = ts.loads(token, salt="email-confirm-key", max_age=86400)
+    except:
+        abort(404)
+
+    person = Person.query.filter_by(email=email).first_or_404()
+
+    person.confirmed = True
+
+    db.session.add(person)
+    db.session.commit()
+
+    return render_template(
+        'login.html')
+
+
+@auth.post('/forgot')
+def forgot_password():
+
+    email = request.json['email']
+
+    if not validators.email(email):
+        return jsonify({'error': "Email is not valid"}), HTTP_400_BAD_REQUEST
+
+    person = Person.query.filter_by(email=email).first()
+
+    if person:
+        ram_base32 = pyotp.random_base32()
+        print('person.otp_secret before ' + ram_base32)
+        totp = pyotp.TOTP(s=ram_base32, interval=900)
+        otp = totp.now()
+        person.otp_secret = ram_base32
+        db.session.add(person)
+        db.session.commit()
+
+        # Now we'll send the otp to email
+        subject = "Your OTP for reset password"
+
+
+        html = render_template(
+            'forgot.html',
+            otp=otp)
+
+        send_email(person.email, subject, html)
+    else:
+        return jsonify({'error': "Email is invalid."}), HTTP_409_CONFLICT
+
+
+    return jsonify({
+        'status': 0,
+        'message': "Successfully set new password",
+
+    }), HTTP_200_OK
+
+
+@auth.post('/forgot/new')
+def forgot_password_new():
+
+    new_password = request.json['password']
+    otp = request.json['otp']
+    email = request.json['email']
+
+    if not validators.email(email):
+        return jsonify({'error': "Email is not valid"}), HTTP_400_BAD_REQUEST
+
+    person = Person.query.filter_by(email=email).first()
+   
+    if person:
+        if not person.otp_secret:
+            return jsonify({'error': "Otp is not valid"}), HTTP_400_BAD_REQUEST
+        totp = pyotp.TOTP(s=person.otp_secret, interval=900)
+        isOtpValid = totp.verify(otp)
+
+        if isOtpValid:
+            pwd_hash = generate_password_hash(new_password)
+            person.password = pwd_hash
+            person.otp_secret = None
+            db.session.add(person)
+            db.session.commit()
+        else:
+            return jsonify({'error': "OTP is expired."}), HTTP_409_CONFLICT
+    else:
+        return jsonify({'error': "Email is invalid."}), HTTP_409_CONFLICT
+
+    return jsonify({
+        'status': 0,
+        'message': "Successfully create new password",
+
+    }), HTTP_200_OK
+
+
+@auth.post('/changepassword')
+@jwt_required()
+def change_password():
+
+    current_password = request.json['current_password']
+    new_password = request.json['new_password']
+
+    person_id = get_jwt_identity()
+
+    person = Person.query.filter_by(person_id=person_id).first()
+
+    if person:
+        is_pass_correct = check_password_hash(
+            person.password, current_password)
+
+        if is_pass_correct:
+            pwd_hash = generate_password_hash(new_password)
+            person.password = pwd_hash
+            db.session.commit()
+        else:
+            return jsonify({'error': "Current password is incorrect."}), HTTP_401_UNAUTHORIZED
+    else:
+        return jsonify({'error': "Person is not found."}), HTTP_401_UNAUTHORIZED
+
+    return jsonify({
+        'status': 0,
+        'message': "Successfully create new password",
+
     }), HTTP_200_OK

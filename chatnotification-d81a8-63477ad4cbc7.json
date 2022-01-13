@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "chatnotification-d81a8",
+  "private_key_id": "63477ad4cbc75c756db191c0287fc1eddd9ae7cc",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCZSfIDLhABkyoN\n6IKmDK4WrHM3RFP39edzMzEVhut4rLFKernzcleXgfoLCHbQJkax1JQRk2yV9l0Y\nhDcBvTA1X16QGxO5YiIiXon9SZlDrILvdtwIm6adwMc65LNy0y9GQDBt1+OoVCc3\n2SGfjFRex4MzDS1E2HzNUBtPDWmLUmPcZeNQbaZpaR9Hz3/p9zV8d2kg9oXy4IS2\nFi2FbOU1ywqLlpKr+gGEmXZHdeTYlAwco+A6TwN4dnvQz4oWrCYAVJO+Xmo5tGYY\nNTuM4fctLLvwX069q+mjKvRzeeXhI5759uXBRiiaUan/d0zzed40OFl1HJ5Bu2+1\nrDL+aNXVAgMBAAECggEAEsGUhkUVmku6gpcnnU/B4W5abrHCoH2LQ3JJGDw5BbwD\nuXxI0nv0McqqoLz5ZMC6N7ouH/Rs/fB2NbC/1kui4XT46iMWB8H1MUVmFwLxaPFr\n2AcwJzF8cqMK/a7MMkma6DqkclxPM+KQJepAjfgqvqok6JM9LcZbhve9T6/xcSWE\nKniSk8iM3ZM0VdaZbmgC5wT/zEGRFuX0p4yLieU9ST+aByFMIthjDSjmbxyNB/4E\nLhmyYXxfZ2uoIHEklKWJp29pc5eAcdx48wMYIXIjKk/RqQwODKk+alIjFAQwyYes\ndQ5UGYoNYE/BPAIuNjKCIkFQk667c3BTZidgt/yPYQKBgQDK+6+LItEuhG+58g5p\n3uTDKkZWLNK6vTekbHpyG0qKA522jK71+NpZTZulobF3oD1ZhwsvhreIeOi551Bb\nzzVJj7VL5nup/KP2PlMU6x4dwSD2KZTThX0yoLLtXW7vtuYiy1lXvj6uWa/tziqu\nz3Tzrggq0+tBf3/OuButK/BffQKBgQDBU3zxd3rMrlmFvJWIbWqUUb92MqK+xrjB\nuFCkxCrfyyEfzumNDWN3pAObNMGUsWTFScfLgxMog0VeLYTETC9v5gmHJhn6hT9W\n702aZ1XRrpvAYre9HrrDia6a9Dn9/s7+88EMqMZSr9HLpsRbufGv6z7vvTZew7Vk\nkxrCLdxPOQKBgBni+0I9UHwkO7N1IU1zNa2GKK44zS8vjncTtpHy1RDA4U40puOL\ntx0Ifr8i3eUptGlEhbKr9aAb+2IqE9+Bj4QwJajmXgMRyz9ON35FdfPJe5CpQOew\n8ISSZf9LmShNJRBu6pf8FTZbDcrALkVZA8tH+JatrCUQQ5ZzeGQfZGppAoGAMyOa\nkWVBnpMgKzhPdd87qjBVrTaHxl9a0COpcWxSyxA4mulo7l70SNmh+pRiAKtMNMPn\njfYGQ1k2KEtyK1rb0YXQT2fMx3An6R80L/vVv7moiaOTZvuR+9eX0HV6Qa39o4Nn\nNaoPjB/mJzDeEEWHoTlhVJmAoGC0wv4GvgbTmEECgYEAuldK5emkn4goS67ORl1k\nsBHvi2VRQVIDnAy2wwz0GQ6Lt0xqq5Hg8Kji+b201YIWjfWIFhrCTh2WwVAiIFVK\nof9Zt26z+pFhpUtoPY7B4sZcyebfeX1NTxXz2Wqfn4JVA+TmFmCEyM5KuZQmb2YT\nO3KaMk5g6EZqo1qE7K0zLhY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "cloudstorage@chatnotification-d81a8.iam.gserviceaccount.com",
+  "client_id": "110757687431422682316",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cloudstorage%40chatnotification-d81a8.iam.gserviceaccount.com"
+}
