@@ -1,11 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from datetime import datetime
+
 import string
 import random
 db = SQLAlchemy()
 ma = Marshmallow()
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,6 +40,7 @@ class Bookmark(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+   
 
     def generate_short_characters(self):
         characters = string.digits+string.ascii_letters
@@ -65,7 +66,7 @@ class Bookmark(db.Model):
 class BookmarksSchema(ma.Schema):
     class Meta:
         fields = ['id', 'body', 'url', 'short_url',
-                  'visits', 'user_id', 'created_at', 'updated_at']
+                  'visits', 'user_id', 'created_at', 'updated_at', 'testbookmark']
 
 
 # create instance of schema
