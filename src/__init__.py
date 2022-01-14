@@ -15,6 +15,7 @@ from flask_migrate import Migrate
 from src.email import mail
 from src.member import member
 from src.profile import profile
+from src.website.webAuth import webAuth
 
 
 def create_app(test_config=None):
@@ -23,8 +24,8 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"), 
-            SQLALCHEMY_DATABASE_URI=os.environ.get(
-                "DATABASE_URL").replace("://", "ql://", 1),
+            # SQLALCHEMY_DATABASE_URI=os.environ.get(
+            #     "DATABASE_URL").replace("://", "ql://", 1),
             SQLALCHEMY_TRACK_MODIFICATIONS=False, 
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'), 
             SWAGGER={
@@ -39,6 +40,7 @@ def create_app(test_config=None):
     db.app = app
     db.init_app(app)
     app.register_blueprint(auth)
+    app.register_blueprint(webAuth)
     app.register_blueprint(menus)
     app.register_blueprint(item)
     app.register_blueprint(song)
@@ -48,13 +50,7 @@ def create_app(test_config=None):
     # ma.app = app
     ma.init_app(app)
    
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = 'fyneos88@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'As5201314!@#$'
-    app.config['MAIL_DEFAULT_SENDER'] = 'no-reply@fyneos88.gmail.com'
-    app.config['MAIL_USE_TLS'] = False
-    app.config['MAIL_USE_SSL'] = True
+    
     mail.app = app
     mail.init_app(app)
 
