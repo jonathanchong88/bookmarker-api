@@ -1,0 +1,85 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <div >
+		{% if image_url %}
+
+		    <img src="{{ image_url }}" width="200" align="right">
+		
+		{% else %}
+
+		    <img src="{{ url_for('static', filename='/default_profile_pic.png')}}" width="200" align="right">
+
+		{% endif %}
+	
+	</div>
+
+  <br/>
+
+    <strong>Name:</strong>
+	{{ member.first_name + ' ' + member.last_name }}</small> <br/><br/>
+
+    <strong>Nickname:</strong>
+    {{ member.nickname }}</small> <br/><br/>
+
+	 <strong>Email:</strong>
+    {{ member.person.email }}</small> <br/><br/>
+
+     <strong>Date of Birth:</strong>
+	{{ member.date_of_birth }}</small> <br/><br/>
+
+    <strong>Phone Number:</strong>
+	{{ member.phone_number }}</small> <br/><br/>
+
+    <strong>Gender:</strong>
+	{{ member.gender }}</small> <br/><br/>
+
+     <strong>Address:</strong>
+	{{ member.address }}</small> <br/><br/>
+
+     <strong>Nationality:</strong>
+	{{ member.nationality }}</small> <br/><br/>
+
+    <strong>Create Date:</strong>
+	{{ member.created_date }}</small> <br/><br/>
+
+	<strong>Duty Roles:</strong>
+	{% for _member_role in member.dutyroles %}	
+	<button class="btn btn-info btn-sm">{{ _member_role.duty_role_type }}</button>
+				{#{{ _member_role.duty_role_type }}</small>,#}
+	{% endfor %}
+
+	<br/><br/>
+
+	<strong>Groups:</strong>
+	{% for _group in member.group %}	
+	<button class="btn btn-info btn-sm">{{ _group.name }}</button>
+	{% endfor %}
+
+	{% if status %}
+	<br/><br/>
+	<strong>Status:</strong>
+	{{ status }}</small> <br/><br/>
+	{% endif %}
+
+<br/>
+<br/>
+
+    	<a href="{{ url_for('webmember.edit_member', id=member.person_detail_id)}}" class="btn btn-outline-info btn-sm">Edit Member</a>
+
+	<a href="{{ url_for('webmember.delete_member', id=member.person_detail_id)}}" class="btn btn-outline-danger btn-sm">Delete Member</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('webmember.members')}}" class="btn btn-outline-secondary btn-sm">Back To members</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

@@ -102,8 +102,8 @@ def login():
                 person.fcm_token = fcmToken
                 db.session.commit()
 
-            # test_send_invalid_token("LCMS APP", "Successfully login", {'score':'850'},
-            #                         person.fcm_token)
+            test_send_invalid_token("LCMS APP", "Successfully login", {'score':'850'},
+                                    person.fcm_token)
 
             return jsonify({
                 'status': 0,

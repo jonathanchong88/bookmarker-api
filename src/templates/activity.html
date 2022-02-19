@@ -1,0 +1,52 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<h2>{{ activity.title }}</h2>
+	{#<small>By: {{ post.poster.name }}<br/>#}
+	{{ activity.created_date }}</small> <br/><br/>
+
+    {{activity.church_group.name}}</small> <br/><br/>
+
+	{{ activity.content }}<br/><br/>
+
+	{#{% if post.poster.about_author %}
+		{{ post.poster.about_author }}
+	{% endif %}#}
+
+  
+
+    <div class="container">
+        <div class="card-group card-group-scroll">
+          {% for image in activity.image %}
+            <div class="card">
+                <img class="card-img-top" src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" />
+            </div>
+        
+            {% endfor %}
+        </div>
+    </div>
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/ivGkoZ2E-sw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+<br/>
+<br/>
+
+    	<a href="{{ url_for('webactivity.edit_activity', id=activity.item_id)}}" class="btn btn-outline-info btn-sm">Edit Activity</a>
+
+	<a href="{{ url_for('webactivity.delete_activity', id=activity.item_id)}}" class="btn btn-outline-danger btn-sm">Delete Activity</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('webactivity.activities')}}" class="btn btn-outline-secondary btn-sm">Back To Activities</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

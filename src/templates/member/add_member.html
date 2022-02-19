@@ -1,0 +1,106 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+
+{% if current_user.is_authenticated %}
+
+<h1>Add Member</h1>
+	<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST" enctype="multipart/form-data">
+		{{ form.hidden_tag() }}
+
+		{{ form.first_name.label(class="form-label") }}
+
+		{{ form.first_name(class="form-control") }}
+		<br/>
+ <hr>
+		
+		{{ form.last_name.label(class="form-label") }}
+
+		{{ form.last_name(class="form-control") }}
+		<br/>
+ <hr>
+
+ {{ form.nickname.label(class="form-label") }}
+
+		{{ form.nickname(class="form-control") }}
+		<br/>
+ <hr>
+
+
+		{{ form.gender.label(class="form-label") }}
+
+		{{ form.gender(class="form-control") }}
+		<br/>
+ <hr>
+
+ 	{{ form.date_of_birth.label(class="form-label") }}
+
+		{{ form.date_of_birth(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.phone_number.label(class="form-label") }}
+
+		{{ form.phone_number(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.address.label(class="form-label") }}
+
+		{{ form.address(class="form-control") }}
+		<br/>
+ <hr>
+
+
+
+ {{ form.nationality.label(class="form-label") }}
+
+		{{ form.nationality(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.image.label(class="form-label") }}
+
+		{{ form.image(class="form-control") }}
+		<br/>
+ <hr>
+
+ 		{{ form.duty_roles.label(class="form-label") }}
+
+		{{ form.duty_roles(class='form-control',  multiple="multiple") }}
+		<br/>
+ <hr>
+
+<br />
+
+{% if isRegisted %}
+{{ form.status.label(class="form-label") }}
+
+		{{ form.status(class="form-control") }}
+		<br/>
+ <hr>
+
+{% endif %}
+
+		
+		{{ form.submit(class="btn btn-primary") }}
+
+
+	</form>
+
+</div>
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
+
+<a href="{{ url_for('webAuth.loginPage') }}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

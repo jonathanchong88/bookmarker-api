@@ -1,0 +1,58 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<div class="row float-right">
+	 <div class="col-md-12 bg-light text-right">
+<a href="{{ url_for('websong.add_song')}}" class="btn btn-primary" role="button" aria-pressed="true">Add New</a>
+</div>
+</div>
+<br/>
+<br/>
+{% for _song in songs.items %}
+<div class="shadow p-2 mb-8 bg-body rounded">
+	<h3><a href="{{ url_for('websong.song', id=_song.song_id)}}">{{ _song.song_name }}</a></h3>
+</div>
+<br/>
+{% endfor %}
+
+
+
+<!-- Pagination Links-->
+<div class="text-right">
+    <a href="{{ url_for('websong.songs', page=songs.prev_num) }}"
+       class="btn btn-outline-dark 
+       {% if songs.page == 1 %}disabled{% endif %}">
+        &laquo;
+    </a>
+<!-- Loop through the number of pages to display a link for each-->
+    {% for page_num in songs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+{% if page_num %}
+<!-- Check for the active page and set the link to "Active"-->
+            {% if songs.page == page_num %}
+            <a href="{{ url_for('websong.songs', page=page_num) }}"
+               class="btn btn-dark">
+                {{ page_num }}
+            </a>
+            {% else %}
+            <a href="{{ url_for('websong.songs', page=page_num) }}"
+               class="btn btn-outline-dark">
+                {{ page_num }}
+            </a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    <a href="{{ url_for('websong.songs', page=songs.next_num) }}"
+       class="btn btn-outline-dark 
+       {% if songs.page == songs.pages %}disabled{% endif %}">
+        &raquo;
+    </a>
+</div>
+<p class="text-right mt-3">
+   Showing page {{ songs.page }} of {{ songs.pages }}
+</p>
+
+
+{% endblock %}

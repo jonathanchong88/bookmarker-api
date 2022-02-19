@@ -1,0 +1,121 @@
+{% extends '_base.html' %}
+
+
+{% block content %}
+
+<br/>
+<h2>Edit Member</h2>
+<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+   
+	<form method="POST" enctype="multipart/form-data">
+		{{ form.hidden_tag() }}
+
+		{{ form.first_name.label(class="form-label") }}
+
+		{{ form.first_name(class="form-control") }}
+		<br/>
+ <hr>
+		
+		{{ form.last_name.label(class="form-label") }}
+
+		{{ form.last_name(class="form-control") }}
+		<br/>
+ <hr>
+
+ {{ form.nickname.label(class="form-label") }}
+
+		{{ form.nickname(class="form-control") }}
+		<br/>
+ <hr>
+
+
+		{{ form.gender.label(class="form-label") }}
+
+		{{ form.gender(class="form-control") }}
+		<br/>
+ <hr>
+
+ 	{{ form.date_of_birth.label(class="form-label") }}
+
+		{{ form.date_of_birth(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.phone_number.label(class="form-label") }}
+
+		{{ form.phone_number(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.address.label(class="form-label") }}
+
+		{{ form.address(class="form-control") }}
+		<br/>
+ <hr>
+
+
+
+ {{ form.nationality.label(class="form-label") }}
+
+		{{ form.nationality(class="form-control") }}
+		<br/>
+ <hr>
+
+
+ {{ form.image.label(class="form-label") }}
+
+		{{ form.image(class="form-control") }}
+		<br/>
+ <hr>
+
+ 		{{ form.duty_roles.label(class="form-label") }}
+
+		{{ form.duty_roles(class='form-control',  multiple="multiple") }}
+		<br/>
+ <hr>
+
+  		{{ form.groups.label(class="form-label") }}
+
+		{{ form.groups(class='form-control',  multiple="multiple") }}
+		<br/>
+ <hr>
+
+<br />
+
+{% if isRegisted %}
+{{ form.status.label(class="form-label") }}
+
+		{{ form.status(class="form-control") }}
+		<br/>
+ <hr>
+
+{% endif %}
+
+ {# <div class="container">
+        <div id="card_images" class="card-group card-group-scroll">
+          {% for image in form.image.data %}
+            <div class="card">
+                <img class="card-img-top" src={{image.dataURL}} />
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<br/>#}
+
+ <hr>
+		{{ form.submit(class="btn btn-primary btn-sm") }}
+<a href="{{ url_for('webmember.member',id=form.person_detail_id.data)}}" class="btn btn-outline-secondary btn-sm">Back To Member</a>
+
+	</form>
+
+	
+</div>
+
+
+
+
+
+{% endblock %}

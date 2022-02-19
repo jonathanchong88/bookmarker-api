@@ -1,0 +1,105 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+
+{% if current_user.is_authenticated %}
+
+<h1>Add Program</h1>
+	<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+		{{ form.song_name.label(class="form-label") }}
+
+		{{ form.song_name(class="form-control") }}
+		<br/>
+		
+		{{ form.song_lyric.label(class="form-label") }}
+
+		{{ form.song_lyric(class="form-control", rows="10") }}
+		<br/>
+
+
+    
+		{{ form.video.label(class="form-label") }}
+
+		{{ form.video(class="form-control") }}
+
+		<button type="button" class="btn btn-info btn-sm float-right" onClick="getVideoId()">Upload Video</button>
+
+		<br/>
+		<div id="youtube_preview">
+		 {#<iframe width="200" height="200" src="https://www.youtube.com/embed/ivGkoZ2E-sw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>#}
+
+		</div> 
+
+		<br/>
+
+
+
+
+
+        <!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-sm float-right" onClick="setImagesUrl({{form.images.data}})" data-toggle="modal" data-target="#myModal">Upload Images</button>
+
+<br/>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="container"> 
+           
+            <div id="id_dropzone"  class="dropzone" action="{{ url_for('upload')}}"
+                        >
+                <div class="dz-message needsclick">
+                    <h1>Drop images here or click to upload.</h1>
+                </div>
+            </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" onClick="trytest()" data-dismiss="modal">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+
+  <div class="container">
+        <div id="card_images" class="card-group card-group-scroll">
+          {% for image in form.images.data %}
+            <div class="card">
+                <img class="card-img-top" src={{image.dataURL}} />
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+
+
+		
+		{{ form.submit(class="btn btn-primary") }}
+
+
+	</form>
+
+</div>
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
+
+<a href="{{ url_for('webAuth.loginPage') }}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

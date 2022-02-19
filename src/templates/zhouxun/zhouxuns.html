@@ -1,0 +1,58 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<div class="row float-right">
+	 <div class="col-md-12 bg-light text-right">
+<a href="{{ url_for('webzhouxun.add_zhouxun')}}" class="btn btn-primary" role="button" aria-pressed="true">Add New</a>
+</div>
+</div>
+<br/>
+<br/>
+{% for _zhouxun in zhouxuns.items %}
+<div class="shadow p-2 mb-8 bg-body rounded">
+	<h3><a href="{{ url_for('webzhouxun.zhouxun', id=_zhouxun.item_id)}}">{{ _zhouxun.created_date }}</a></h3>
+</div>
+<br/>
+{% endfor %}
+
+
+
+<!-- Pagination Links-->
+<div class="text-right">
+    <a href="{{ url_for('webzhouxun.zhouxuns', page=zhouxuns.prev_num) }}"
+       class="btn btn-outline-dark 
+       {% if zhouxuns.page == 1 %}disabled{% endif %}">
+        &laquo;
+    </a>
+<!-- Loop through the number of pages to display a link for each-->
+    {% for page_num in zhouxuns.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+{% if page_num %}
+<!-- Check for the active page and set the link to "Active"-->
+            {% if zhouxuns.page == page_num %}
+            <a href="{{ url_for('webzhouxun.zhouxuns', page=page_num) }}"
+               class="btn btn-dark">
+                {{ page_num }}
+            </a>
+            {% else %}
+            <a href="{{ url_for('webzhouxun.zhouxuns', page=page_num) }}"
+               class="btn btn-outline-dark">
+                {{ page_num }}
+            </a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    <a href="{{ url_for('webzhouxun.zhouxuns', page=zhouxuns.next_num) }}"
+       class="btn btn-outline-dark 
+       {% if zhouxuns.page == zhouxuns.pages %}disabled{% endif %}">
+        &raquo;
+    </a>
+</div>
+<p class="text-right mt-3">
+   Showing page {{ zhouxuns.page }} of {{ zhouxuns.pages }}
+</p>
+
+
+{% endblock %}

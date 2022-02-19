@@ -93,10 +93,11 @@ def test_send_invalid_token(title, body, data, registration_token):
         notification=messaging.Notification('Title', 'Body'),
         tokens=[registration_token])
 
-    batch_response = messaging.send_multicast(multicast)
+    response = messaging.send_multicast(multicast)
     # Response is a message ID string.
     # print('Successfully sent message:', response)
-    print('Successfully sent message:', batch_response)
+    print('response', response.success_count, response.failure_count)
+    # print('Successfully sent message:', batch_response)
 
 
 def test_send_malformed_token():

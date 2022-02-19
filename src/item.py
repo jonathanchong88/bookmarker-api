@@ -5,7 +5,7 @@ import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from src.database2 import db, Person, Item, Image, images_schema, Language, languages_schema
 from flasgger import swag_from
-from src.google_storage import generate_download_signed_url_v4, generate_upload_signed_url_v4
+from src.google_storage import generate_download_signed_url_v4, generate_upload_signed_url_v4, cors_configuration, bucket_metadata
 
 item = Blueprint("item", __name__, url_prefix="/api/v1/item")
 
@@ -37,7 +37,8 @@ def get_items():
                 image = []
                 for image_item in item.image:
                     image.append({
-                        # generate_download_signed_url_v4(image_item.bucket_name, image_item.file_name)
+                        # bucket_name=cors_configuration(image_item.bucket_name)
+                        # generate_download_signed_url_v4(bucket_name, image_item.file_name)
                         'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
                     })
 
@@ -85,7 +86,8 @@ def get_item():
             image = []
             for image_item in item.image:
                 image.append({
-                    # generate_download_signed_url_v4(image_item.bucket_name, image_item.file_name)
+                    # bucket_name=cors_configuration(image_item.bucket_name)
+                    # generate_download_signed_url_v4(bucket_name, image_item.file_name)
                     'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
                 })
 
@@ -124,7 +126,8 @@ def get_upload_item():
     # else:
     #     return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
     # data = []
-        url3 = generate_upload_signed_url_v4('jonathan_bucket_1', file_name)
+        bucket_name = cors_configuration('jonathan_bucket_1')
+        url3 = generate_upload_signed_url_v4(bucket_name, file_name)
     # url4 = generate_upload_signed_url_v4('jonathan_bucket_1', 'zhouxun4')
 
     
@@ -185,3 +188,13 @@ def get_language():
             return jsonify({'error': 'language_list not found'}), HTTP_404_NOT_FOUND
     else:
         return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+
+
+@item.get("/images")
+@jwt_required()
+# @swag_from("./docs/bookmarks/stats.yaml")
+def get_images():
+    bucket_name = cors_configuration('jonathan_bucket_1')
+    # bucket = bucket_metadata('jonathan_bucket_1')
+    url = generate_download_signed_url_v4(bucket_name, 'zhouxun1')
+    return jsonify({'data': url}), HTTP_200_OK
