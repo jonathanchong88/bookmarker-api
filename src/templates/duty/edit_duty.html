@@ -1,0 +1,79 @@
+{% extends '_base.html' %}
+
+
+{% block content %}
+
+<br/>
+<h2>Edit Duty</h2>
+<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+     {{ form.group_id.label(class="form-label") }}
+
+		{{ form.group_id(class="form-control") }}
+		<br/>
+
+        <!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-sm float-right" onClick="setImagesUrl({{form.images.data}})" data-toggle="modal" data-target="#myModal">Upload Images</button>
+
+<br/>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="container"> 
+           
+            <div id="id_dropzone"  class="dropzone" action="{{ url_for('upload')}}"
+                        >
+                <div class="dz-message needsclick">
+                    <h1>Drop images here or click to upload.</h1>
+                </div>
+            </div>
+          
+        </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" onClick="trytest()" data-dismiss="modal">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+
+  <div class="container">
+        <div id="card_images" class="card-group card-group-scroll">
+          {% for image in form.images.data %}
+            <div class="card">
+                <img class="card-img-top" src={{image.dataURL}} />
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+
+
+
+ <hr>
+		{{ form.submit(class="btn btn-primary btn-sm") }}
+<a href="{{ url_for('webduty.duty',id=form.item_id.data)}}" class="btn btn-outline-secondary btn-sm">Back To Duty</a>
+
+	</form>
+
+	
+</div>
+
+
+
+
+
+{% endblock %}

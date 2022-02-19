@@ -1,0 +1,37 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+
+	{{ zhouxun.created_date }}</small> <br/><br/>
+
+    <div class="container">
+        <div class="card-group card-group-scroll">
+          {% for image in zhouxun.image %}
+            <div class="card">
+                <img class="card-img-top" src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" />
+            </div>
+        
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+<br/>
+
+    	<a href="{{ url_for('webzhouxun.edit_zhouxun', id=zhouxun.item_id)}}" class="btn btn-outline-info btn-sm">Edit Zhouxun</a>
+
+	<a href="{{ url_for('webzhouxun.delete_zhouxun', id=zhouxun.item_id)}}" class="btn btn-outline-danger btn-sm">Delete Zhouxun</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('webzhouxun.zhouxuns')}}" class="btn btn-outline-secondary btn-sm">Back To Zhouxuns</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<h2>{{ song.song_name }}</h2>
+	{#<small>By: {{ post.poster.name }}<br/>#}
+	{{ song.created_date }}</small> <br/><br/>
+
+	{{ song.song_lyric }}<br/><br/>
+
+     {% for video in song.video %}
+            
+    <iframe width="200" height="200" src="{{video.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+        <br/><br/>
+            {% endfor %}
+	
+
+
+    <div class="container">
+        <div class="card-group card-group-scroll">
+          {% for image in song.image %}
+            <div class="card">
+                <img class="card-img-top" src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" />
+            </div>
+        
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+<br/>
+
+    	<a href="{{ url_for('websong.edit_song', id=song.song_id)}}" class="btn btn-outline-info btn-sm">Edit Song</a>
+
+	<a href="{{ url_for('websong.delete_song', id=song.song_id)}}" class="btn btn-outline-danger btn-sm">Delete Song</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('websong.songs')}}" class="btn btn-outline-secondary btn-sm">Back To songs</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

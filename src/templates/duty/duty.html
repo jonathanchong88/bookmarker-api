@@ -1,0 +1,40 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+
+	{{ duty.created_date }}</small> <br/><br/>
+
+
+    {{duty.church_group.name}}</small> <br/><br/>
+
+    <div class="container">
+        <div class="card-group card-group-scroll">
+          {% for image in duty.image %}
+            <div class="card">
+                <img class="card-img-top" src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" />
+            </div>
+        
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+<br/>
+
+    	<a href="{{ url_for('webduty.edit_duty', id=duty.item_id)}}" class="btn btn-outline-info btn-sm">Edit Duty</a>
+
+	<a href="{{ url_for('webduty.delete_duty', id=duty.item_id)}}" class="btn btn-outline-danger btn-sm">Delete Duty</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('webduty.duties')}}" class="btn btn-outline-secondary btn-sm">Back To Duties</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

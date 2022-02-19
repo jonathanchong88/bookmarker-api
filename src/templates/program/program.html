@@ -1,0 +1,43 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<h2>{{ program.title }}</h2>
+	{#<small>By: {{ post.poster.name }}<br/>#}
+	{{ program.created_date }}</small> <br/><br/>
+
+    {{program.church_group.name}}</small> <br/><br/>
+
+	{{ program.content }}<br/><br/>
+
+
+    <div class="container">
+        <div class="card-group card-group-scroll">
+          {% for image in program.image %}
+            <div class="card">
+                <img class="card-img-top" src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" />
+            </div>
+        
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+<br/>
+
+    	<a href="{{ url_for('webprogram.edit_program', id=program.item_id)}}" class="btn btn-outline-info btn-sm">Edit Program</a>
+
+	<a href="{{ url_for('webprogram.delete_program', id=program.item_id)}}" class="btn btn-outline-danger btn-sm">Delete Program</a>
+
+{#{% endif %}#}
+
+<a href="{{ url_for('webprogram.programmes')}}" class="btn btn-outline-secondary btn-sm">Back To programmes</a>
+
+
+</div>
+
+
+{#{% if post.person_id == current_user.person_id %}#}
+{% endblock %}

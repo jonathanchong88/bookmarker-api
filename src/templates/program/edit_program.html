@@ -1,0 +1,119 @@
+{% extends '_base.html' %}
+
+
+{% block content %}
+
+<br/>
+<h2>Edit Program</h2>
+<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+          {{ form.group_id.label(class="form-label") }}
+
+		{{ form.group_id(class="form-control") }}
+		<br/>
+        <hr>
+
+		{{ form.title.label(class="form-label") }}
+
+		{{ form.title(class="form-control") }}
+		<br/>
+ <hr>
+		 
+		{#{{ form.slug.label(class="form-label") }}
+
+		{{ form.slug(class="form-control") }}
+		<br/>#}
+		
+		{{ form.content.label(class="form-label") }}
+
+		{{ form.content(class="form-control") }}
+		<br/>
+ <hr>
+       
+
+         {#{{ form.group.label(class="form-label") }}
+
+		{{ form.group(class="form-control") }}
+		<br/>#}
+
+        <div id="place_for_suggestions"></div>
+
+        <!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-sm float-right" onClick="setImagesUrl({{form.images.data}})" data-toggle="modal" data-target="#myModal">Upload Images</button>
+
+<br/>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="container"> 
+           
+            <div id="id_dropzone"  class="dropzone" action="{{ url_for('upload')}}"
+                        >
+                <div class="dz-message needsclick">
+                    <h1>Drop images here or click to upload.</h1>
+                </div>
+            </div>
+          
+        </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" onClick="trytest()" data-dismiss="modal">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+
+  <div class="container">
+        <div id="card_images" class="card-group card-group-scroll">
+          {% for image in form.images.data %}
+            <div class="card">
+                <img class="card-img-top" src={{image.dataURL}} />
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<br/>
+
+
+{#{% for filename in session.filenames %}#}
+     <h4>{{filename}}</h4>
+{#{% endfor %}#}
+
+
+
+ <hr>
+  {# You can get the success response from server like this: #}
+  {#{ dropzone.config(custom_options="success: function(file, response){console.log(response);}") }#}
+		
+		{{ form.submit(class="btn btn-primary btn-sm") }}
+<a href="{{ url_for('webprogram.program',id=form.item_id.data)}}" class="btn btn-outline-secondary btn-sm">Back To Program</a>
+
+{#<a href="{{ url_for('webactivity.edit_activity', id=form.item_id.data) }}">add</a>#}
+
+{#<button type="button" class="btn btn-default" onClick="testtest()" data-dismiss="modal">Confirm</button>#}
+
+	</form>
+	{#{{ ckeditor.load(pkg_type="basic") }}#}
+ 	{#{{ ckeditor.config(name='content') }}#}
+
+	
+</div>
+
+
+
+
+
+{% endblock %}

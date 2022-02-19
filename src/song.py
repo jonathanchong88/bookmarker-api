@@ -21,8 +21,8 @@ def get_song():
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 5, type=int)
 
-        song_list = Song.query.join(Image, Song.song_id == Image.song_id)\
-                    .join(Video, Song.song_id == Video.song_id)\
+        song_list = Song.query.join(Image, Song.song_id == Image.song_id, isouter=True)\
+                    .join(Video, Song.song_id == Video.song_id, isouter=True)\
                     .paginate(page=page, per_page=per_page)
 
         # print(song_list)
@@ -38,6 +38,7 @@ def get_song():
                 for image_item in song.image:
                     print(image_item.bucket_name)
                     image.append({
+                        # bucket_name=cors_configuration('jonathan_bucket_1')
                         # generate_download_signed_url_v4(image_item.bucket_name, image_item.file_name)
                         'image_url':  'https://img2.baidu.com/it/u=3891121913,1329352522&fm=26'
                     })

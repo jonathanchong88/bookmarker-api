@@ -4,6 +4,8 @@ from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from src.google_storage import generate_download_signed_url_v4
+from flask_login import UserMixin
+# from db import PrimaryKeyConstraint
 
 import string
 import random
@@ -12,37 +14,42 @@ ma = Marshmallow()
 
 
 person_duty_role = db.Table('person_duty_role',
-                                   db.Column('person_id', db.Integer,
-                                             db.ForeignKey('person.person_id')),
-                                   db.Column('duty_role_id', db.Integer, db.ForeignKey('duty_role.duty_role_id')))
+                                   db.Column('person_detail_id', db.Integer,
+                                             db.ForeignKey('person_detail.person_detail_id')),
+                                   db.Column('duty_role_id', db.Integer, db.ForeignKey('duty_role.duty_role_id')),
+                            db.Column('created_date', db.DateTime, default=datetime.now()
+                                      ),
+                            )
+
+person_group = db.Table('person_group',
+                            db.Column('person_detail_id', db.Integer,
+                                      db.ForeignKey('person_detail.person_detail_id')),
+                            db.Column('group_id', db.Integer,
+                                      db.ForeignKey('church_group.group_id')),
+                        db.Column('created_date', db.DateTime, default=datetime.now()
+                                  ),
+                            )
 
 
-class Person(db.Model):
+class Person(db.Model, UserMixin):
     __tablename__ = 'person'
     person_id = db.Column(UUID(as_uuid=True), primary_key=True,
                           nullable=False, default=uuid.uuid4)
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    nickname = db.Column(db.String(100))
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.Text(), nullable=False)
-    status = db.Column(db.String(10), nullable=False)
-    gender = db.Column(db.String(1))
-    phone_number = db.Column(db.String(50))
-    nationality = db.Column(db.String(20))
     fcm_token = db.Column(db.Text())
-    address = db.Column(db.Text)
     created_date = db.Column(db.DateTime, default=datetime.now())
     updated_date = db.Column(db.DateTime, default=datetime.now())
-    date_of_birth = db.Column(db.DATE)
     confirmed = db.Column(db.Boolean)
     otp_secret = db.Column(db.String(50))
-    image = db.relationship("Image", backref="person")
+    person_status_id = db.Column(db.Integer, db.ForeignKey('person_status.person_status_id'))
+    person_detail = db.relationship("PersonDetail", backref="person")
     # phonenumber = db.relationship("PhoneNumber", backref="person")
     # location = db.relationship("Location", backref="person")
-    dutyroles = db.relationship('DutyRole', secondary=person_duty_role,
-                                backref=db.backref('dutyroles',
-                                                    lazy='dynamic'))
+
+
+    def get_id(self):
+        return (self.person_id)
 
     def __repr__(self) -> str:
         return 'User>>> {self.dutyrole.duty_role_id}'
@@ -57,6 +64,52 @@ class PersonSchema(ma.Schema):
 # create instance of schema
 person_schema = PersonSchema(many=False)
 persons_schema = PersonSchema(many=True)
+
+
+# class PersonDutyRole(db.Model):
+#     __tablename__ = 'person_duty_role'
+#     # __table_args__ = (
+#     #     db.PrimaryKeyConstraint('person_detail_id', 'duty_role_id'),
+#     # )
+#     created_date = db.Column(db.DateTime, default=datetime.utcnow)
+#     person_detail_id = db.Column(
+#         db.Integer, db.ForeignKey('person_detail.person_detail_id'), primary_key=True)
+#     duty_role_id = db.Column(
+#         db.Integer, db.ForeignKey('duty_role.duty_role_id'), primary_key=True)
+
+#     def __repr__(self) -> str:
+#         return '<Post %r>' % self.id
+
+
+class PersonDetail(db.Model):
+    __tablename__ = 'person_detail'
+    person_detail_id = db.Column(db.Integer, primary_key=True,
+                          nullable=False)
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    nickname = db.Column(db.String(100))
+    gender = db.Column(db.String(1))
+    phone_number = db.Column(db.String(50))
+    nationality = db.Column(db.String(20))
+    address = db.Column(db.Text)
+    created_date = db.Column(db.DateTime, default=datetime.now())
+    updated_date = db.Column(db.DateTime, default=datetime.now())
+    date_of_birth = db.Column(db.DATE)
+    image = db.relationship("Image", backref="person_detail")
+    person_id = db.Column(db.Integer, db.ForeignKey('person.person_id'))
+    # person = db.relationship('Person', primaryjoin='Person.person_id==person_detail.person_id',
+    #                       remote_side='Person.person_id', uselist=False)
+    dutyroles = db.relationship('DutyRole', secondary=person_duty_role,
+                                backref=db.backref('dutyroles',
+                                                   lazy='dynamic'))
+    group = db.relationship('Churchgroup', secondary=person_group, backref=db.backref(
+        'person_group_backref', lazy='dynamic'))
+
+    
+
+    def __repr__(self) -> str:
+        return 'User>>> {self.person_detail_id}'
+
 
 
 class PhoneNumber(db.Model):
@@ -103,7 +156,7 @@ class DutyRole(db.Model):
     duty_role_type = db.Column(db.String(20))
     created_date = db.Column(db.DateTime, default=datetime.now())
     updated_date = db.Column(db.DateTime, default=datetime.now())
-    _person = db.relationship('Person', secondary=person_duty_role, backref=db.backref(
+    _person = db.relationship('PersonDetail', secondary=person_duty_role, backref=db.backref(
         'person_duty_role_backref', lazy='dynamic'))
 
     def __repr__(self) -> str:
@@ -142,6 +195,8 @@ class Churchgroup(db.Model):
     name = db.Column(db.String(50))
     group_menu = db.relationship("Group_menu", backref='church_group')
     item = db.relationship("Item", backref='church_group')
+    _person = db.relationship('PersonDetail', secondary=person_group, backref=db.backref(
+        'person_group_backref', lazy='dynamic'))
 
 
     def __repr__(self) -> str:
@@ -224,7 +279,7 @@ class Image(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('item.item_id'))
     song_id = db.Column(db.Integer, db.ForeignKey('song.song_id'))
     duty_id = db.Column(db.Integer, db.ForeignKey('duty.duty_id'))
-    person_id = db.Column(db.Integer, db.ForeignKey('person.person_id'))
+    person_detail_id = db.Column(db.Integer, db.ForeignKey('person_detail.person_detail_id'))
 
     def __repr__(self) -> str:
         return '<Image %r>' % self.image_id
@@ -342,3 +397,28 @@ class DutySchema(ma.Schema):
 # create instance of schema
 duty_schema = DutySchema(many=False)
 dutys_schema = DutySchema(many=True)
+
+
+class Posts(db.Model):
+    __tablename__ = 'post'
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(255))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.person_id'))
+
+    def __repr__(self) -> str:
+        return '<Post %r>' % self.id
+
+
+class PersonStatus(db.Model):
+    __tablename__ = 'person_status'
+    person_status_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    status_type = db.Column(db.String(50))
+    created_date = db.Column(db.DateTime, default=datetime.now())
+    updated_date = db.Column(db.DateTime, default=datetime.now())
+
+
+    def __repr__(self) -> str:
+        return '<Post %r>' % self.status_type
