@@ -63,7 +63,7 @@ def programmes():
         .filter(Item.menu_id == 8).order_by(Item.updated_date.desc()).paginate(
             page=page, per_page=ROWS_PER_PAGE)
 
-    return render_template("/webprogram/programmes.html", programmes=programmes)
+    return render_template("/program/programmes.html", programmes=programmes)
 
 
 @webprogram.route('/programmes/<int:id>')
