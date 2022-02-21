@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 import validators
 from src.database2 import Person, db, Item, Image, Churchgroup
 from flask_login import login_user, login_required, logout_user, current_user
-from src.webform import DutyForm
+from src.webform import ZhouxunForm
 from src.ustil import solve
 import os
 from src.google_storage import generate_download_signed_url_v4, generate_upload_signed_url_v4, cors_configuration, bucket_metadata, upload_blob, delete_blob
@@ -92,12 +92,15 @@ def edit_zhouxun(id):
     print('edit_zhouxun')
 
     zhouxun = Item.query.get_or_404(id)
-    form = DutyForm()
+    form = ZhouxunForm()
    
     if 'filenames' in session:
         filenames = session['filenames']
     else:
         filenames = []
+
+    # print('edit_zhouxun->' + str(form.validate_on_submit()))
+    # flash(form.errors)
 
     if request.method == 'POST' and form.validate_on_submit():
 
