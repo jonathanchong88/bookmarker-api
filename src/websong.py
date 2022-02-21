@@ -31,12 +31,15 @@ def delete_song(id):
         # Return a message
         flash("Song Was Deleted!")
 
+
         # Grab all the posts from the database
         songs = Song.query.join(
             Image, Song.song_id == Image.song_id, isouter=True)\
             .join(Video, Song.song_id == Video.song_id, isouter=True)\
-            .order_by(Song.song_name).all()
-        return render_template("song/songs.html", songs=songs)
+            .order_by(Song.song_name).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+
+        return render_template("/song/songs.html", songs=songs)
 
     except:
         # Return an error message
@@ -46,15 +49,17 @@ def delete_song(id):
         songs = Song.query.join(
             Image, Song.song_id == Image.song_id, isouter=True)\
             .join(Video, Song.song_id == Video.song_id, isouter=True)\
-            .order_by(Song.song_name).all()
-        return render_template("song/songs.html", songs=songs)
-    # else:
-    #     # Return a message
-    #     flash("You Aren't Authorized To Delete That Post!")
+            .order_by(Song.song_name).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
 
-    #     # Grab all the posts from the database
-    #     posts = Posts.query.order_by(Posts.date_posted)
-    #     return render_template("posts.html", posts=posts)
+        return render_template("/song/songs.html", songs=songs)
+# else:
+#     # Return a message
+#     flash("You Aren't Authorized To Delete That Post!")
+
+#     # Grab all the posts from the database
+#     posts = Posts.query.order_by(Posts.date_posted)
+#     return render_template("posts.html", posts=posts)
 
 
 @websong.route('/songs')
@@ -67,7 +72,6 @@ def songs():
         .join(Video, Song.song_id == Video.song_id, isouter=True)\
         .order_by(Song.song_name).paginate(
         page=page, per_page=ROWS_PER_PAGE)
-
 
     return render_template("/song/songs.html", songs=songs)
 
@@ -110,9 +114,9 @@ def edit_song(id):
                     song_id=video_item.song_id).first()
                 db.session.delete(videoItem)
                 db.session.commit()
-            song.video.append(Video(url=form.video.data,song_id=song.song_id))
+            song.video.append(Video(url=form.video.data, song_id=song.song_id))
 
-        #remove record from db
+        # remove record from db
         for image_item in song.image:
             # print(image_item.file_name)
             # print(filenames)
@@ -128,12 +132,12 @@ def edit_song(id):
                 bucket_name = cors_configuration('jonathan_bucket_1')
                 delete_blob(bucket_name, image_item.file_name)
 
-        #upload local image to google storage if path dont have http
+        # upload local image to google storage if path dont have http
         for image in filenames:
             if "http" not in image['dataURL']:
                 bucket_name = cors_configuration('jonathan_bucket_1')
                 upload_blob(bucket_name, image['dataURL'], image['name'])
-                #update to db
+                # update to db
                 song.image.append(Image(
                     file_name=image['name'], bucket_name='jonathan_bucket_1', item_id=id, created_date=datetime.now(), updated_date=datetime.now()))
 
@@ -193,11 +197,14 @@ def add_song():
     else:
         filenames = []
 
+    # flash(form.errors)
+
     if request.method == 'POST' and form.validate_on_submit():
         # person_id = current_user.person_id
 
         # print(form.group_id.data)
-        song = Song(song_name=form.song_name.data, song_lyric=form.song_lyric.data)
+        song = Song(song_name=form.song_name.data,
+                    song_lyric=form.song_lyric.data)
         db.session.add(song)
         db.session.commit()
 
@@ -208,12 +215,12 @@ def add_song():
         if form.video.data:
             song.video.append(Video(url=form.video.data, song_id=song.song_id))
 
-        #upload local image to google storage if path dont have http
+        # upload local image to google storage if path dont have http
         for image in filenames:
             if "http" not in image['dataURL']:
                 bucket_name = cors_configuration('jonathan_bucket_1')
                 upload_blob(bucket_name, image['dataURL'], image['name'])
-                #update to db
+                # update to db
                 song.image.append(Image(
                     file_name=image['name'], bucket_name='jonathan_bucket_1', song_id=song.song_id, created_date=datetime.now(), updated_date=datetime.now()))
 

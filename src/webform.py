@@ -75,7 +75,7 @@ class SongForm(FlaskForm):
 
 class ZhouxunForm(FlaskForm):
     item_id = HiddenField('Item_id')
-    images = HiddenField('Images')
+    images = HiddenField('Images', validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 

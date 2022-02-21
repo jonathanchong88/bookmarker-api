@@ -33,14 +33,24 @@ def delete_member(id):
         flash("Member Was Deleted!")
 
         # Grab all the posts from the database
-        return redirect(url_for('webmember.members'))
+        members = PersonDetail.query.join(
+            Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
+            .order_by(PersonDetail.last_name).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+
+        return render_template("/member/members.html", members=members)
 
     except:
         # Return an error message
         flash("Whoops! There was a problem deleting member, try again...")
 
         # Grab all the posts from the database
-        return redirect(url_for('webmember.members'))
+        members = PersonDetail.query.join(
+            Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
+            .order_by(PersonDetail.last_name).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+
+        return render_template("/member/members.html", members=members)
     # else:
     #     # Return a message
     #     flash("You Aren't Authorized To Delete That Post!")
