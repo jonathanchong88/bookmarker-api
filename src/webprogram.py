@@ -79,7 +79,7 @@ def program(id):
     #     Churchgroup, Item.group_id == Churchgroup.group_id, isouter=True)
     # church_group = Churchgroup.query.get_or_404(activity.group_id)
     # print(activity.church_group.name)
-    return render_template('webprogram/program.html', program=program)
+    return render_template('program/program.html', program=program)
 
 
 @webprogram.route('/programmes/edit/<int:id>', methods=['GET', 'POST'])
@@ -165,7 +165,7 @@ def edit_program(id):
     session.permanent = True
     print(session['filenames'])
 
-    return render_template('webprogram/edit_program.html', form=form)
+    return render_template('program/edit_program.html', form=form)
     # else:
     # 	flash("You Aren't Authorized To Edit This Post...")
     # 	posts = Posts.query.order_by(Posts.date_posted)
@@ -222,5 +222,5 @@ def add_program():
     session['filenames'] = filenames
     session.permanent = True
     # Redirect to the webpage
-    return render_template("webprogram/add_program.html", form=form)
+    return render_template("program/add_program.html", form=form)
 
