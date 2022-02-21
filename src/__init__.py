@@ -26,6 +26,7 @@ from src.webduty import webduty
 from src.websong import websong
 from src.webmember import webmember
 from src.webdutyrole import webdutyrole
+from src.loadprivacy import webprivacy
 from src.ustil import solve, allowed_file, basedir
 from flask_ckeditor import CKEditor
 import uuid
@@ -78,6 +79,7 @@ def create_app(test_config=None):
     app.register_blueprint(websong)
     app.register_blueprint(webmember)
     app.register_blueprint(webdutyrole)
+    app.register_blueprint(webprivacy)
     # ma.app = app
     ma.init_app(app)
     ckeditor = CKEditor(app)
