@@ -34,18 +34,32 @@ def delete_zhouxun(id):
         # Grab all the posts from the database
         zhouxuns = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 9).all()
-        return render_template("zhouxun/zhouxuns.html", zhouxuns=zhouxuns)
+            .filter(Item.menu_id == 9).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+
+        if zhouxuns.items:
+            for item in zhouxuns.items:
+                item.created_date = item.created_date.strftime(
+                    "%m/%d/%Y, %H:%M:%S")
+
+        return render_template("/zhouxun/zhouxuns.html", zhouxuns=zhouxuns)
 
     except:
         # Return an error message
         flash("Whoops! There was a problem deleting zhouxun, try again...")
 
-        # Grab all the posts from the database
         zhouxuns = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 9).all()
-        return render_template("zhouxun/zhouxuns.html", zhouxuns=zhouxuns)
+            .filter(Item.menu_id == 9).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+
+        # Grab all the posts from the database
+        if zhouxuns.items:
+            for item in zhouxuns.items:
+                item.created_date = item.created_date.strftime(
+                    "%m/%d/%Y, %H:%M:%S")
+
+        return render_template("/zhouxun/zhouxuns.html", zhouxuns=zhouxuns)
     # else:
     #     # Return a message
     #     flash("You Aren't Authorized To Delete That Post!")
@@ -102,7 +116,10 @@ def edit_zhouxun(id):
     # print('edit_zhouxun->' + str(form.validate_on_submit()))
     # flash(form.errors)
 
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
+
+        if filenames is None:
+            return flash('Must upload photos')
 
         #remove record from db
         for image_item in zhouxun.image:
@@ -181,9 +198,15 @@ def add_zhouxun():
     else:
         filenames = []
 
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
+        if filenames == []:
+            flash('Must upload photos')
+            form.images.data = []
+            filenames.clear()
+            session['filenames'] = filenames
+            return render_template("zhouxun/add_zhouxun.html", form=form)
         # person_id = current_user.person_id
-        zhouxun = Item(menu_id=9)
+        zhouxun = Item(menu_id=9, group_id=4)
         db.session.add(zhouxun)
         db.session.commit()
         # print(program.item_id)

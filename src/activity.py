@@ -39,12 +39,13 @@ def delete_activity(id):
         db.session.commit()
 
         # Return a message
-        flash("Activity Post Was Deleted!")
+        flash("Activity Was Deleted!")
 
         # Grab all the posts from the database
         activities = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 3).all()
+            .filter(Item.menu_id == 3).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
         return render_template("activities.html", activities=activities)
 
     except:
@@ -54,7 +55,8 @@ def delete_activity(id):
         # Grab all the posts from the database
         activities = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 3).all()
+            .filter(Item.menu_id == 3).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
         return render_template("activities.html", activities=activities)
     # else:
     #     # Return a message

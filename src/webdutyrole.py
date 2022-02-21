@@ -19,6 +19,7 @@ webdutyrole = Blueprint("webdutyrole", __name__)
 def delete_dutyrole(id):
    
     dutyrole_to_delete = DutyRole.query.get_or_404(id)
+    form = DutyRoleForm()
     # id = current_user.person_id
     # if id == post_to_delete.poster.id:
     try:
@@ -29,14 +30,22 @@ def delete_dutyrole(id):
         flash("Duty Role Was Deleted!")
 
         # Grab all the posts from the database
-        return redirect(url_for('webdutyrole.dutyroles'))
+        dutyroles = DutyRole.query.order_by(DutyRole.duty_role_type).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+       
+
+        return render_template("/duty_role/duty_roles.html", dutyroles=dutyroles, form=form)
 
     except:
         # Return an error message
         flash("Whoops! There was a problem deleting duty role, try again...")
 
         # Grab all the posts from the database
-        return redirect(url_for('webdutyrole.dutyroles'))
+        dutyroles = DutyRole.query.order_by(DutyRole.duty_role_type).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
+        
+
+        return render_template("/duty_role/duty_roles.html", dutyroles=dutyroles, form=form)
     # else:
     #     # Return a message
     #     flash("You Aren't Authorized To Delete That Post!")

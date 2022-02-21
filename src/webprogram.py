@@ -32,7 +32,8 @@ def delete_program(id):
         # Grab all the posts from the database
         programmes = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 8).order_by(Item.updated_date.desc()).all()
+            .filter(Item.menu_id == 8).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
         return render_template("webprogram/programmes.html", programmes=programmes)
 
     except:
@@ -42,7 +43,8 @@ def delete_program(id):
         # Grab all the posts from the database
         programmes = Item.query.join(
             Image, Item.item_id == Image.item_id, isouter=True)\
-            .filter(Item.menu_id == 8).order_by(Item.updated_date.desc()).all()
+            .filter(Item.menu_id == 8).order_by(Item.updated_date.desc()).paginate(
+            page=1, per_page=ROWS_PER_PAGE)
         return render_template("webprogram/programmes.html", programmes=programmes)
     # else:
     #     # Return a message

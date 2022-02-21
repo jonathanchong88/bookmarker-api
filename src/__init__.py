@@ -8,7 +8,7 @@ from src.song import song
 from src.database2 import db, ma, Person
 # from src.database import db, Bookmark, ma
 from flask_jwt_extended import JWTManager
-from src.constant.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
+from src.constant.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_200_OK
 from flasgger import Swagger, swag_from
 from src.config.swagger import template, swagger_config
 from flask_migrate import Migrate
@@ -30,6 +30,7 @@ from src.ustil import solve, allowed_file, basedir
 from flask_ckeditor import CKEditor
 import uuid
 from werkzeug.utils import secure_filename
+from src.appScedular import scheduler, delete_upload_dir2
 
 from urllib.parse import urlparse
 from datetime import datetime
@@ -107,6 +108,8 @@ def create_app(test_config=None):
 
     Swagger(app, config=swagger_config, template=template)
 
+    # delete_upload_dir2()
+
     # @app.get('/<short_url>')
     # @swag_from('./docs/short_url.yaml')
     # def redirect_to_url(short_url):
@@ -116,6 +119,24 @@ def create_app(test_config=None):
     #         bookmark.visits = bookmark.visits+1
     #         db.session.commit()
     #         return redirect(bookmark.url)
+
+
+    @app.route('/delete_upload_dir')
+    def delete_upload_dir():
+        folder = os.path.join(basedir,
+                              app.config['UPLOAD_FOLDER'])
+
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        
+        return jsonify({'success': 'clear'}), HTTP_200_OK
 
 
     @app.route('/upload', methods=['POST', 'GET'])
