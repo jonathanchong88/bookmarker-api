@@ -30,7 +30,7 @@ from src.ustil import solve, allowed_file, basedir
 from flask_ckeditor import CKEditor
 import uuid
 from werkzeug.utils import secure_filename
-from src.appScedular import scheduler, delete_upload_dir2
+from src.appScedular import scheduler
 
 from urllib.parse import urlparse
 from datetime import datetime
