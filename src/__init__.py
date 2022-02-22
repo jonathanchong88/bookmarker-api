@@ -92,6 +92,9 @@ def create_app(test_config=None):
     def load_user(id):
         return Person.query.get(id)
 
+    print(os.environ.get('APP_MAIL_USERNAME'))
+    print(os.environ.get('APP_MAIL_PASSWORD'))
+
    
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
