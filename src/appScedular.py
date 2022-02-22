@@ -1,4 +1,4 @@
-import time
+# import time
 import atexit
 import os
 from flask import current_app

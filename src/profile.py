@@ -3,7 +3,7 @@ from flask import Blueprint, request
 from flask.json import jsonify
 import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from src.database2 import db, Person, DutyRole, Image, PhoneNumber, Location
+from src.database2 import db, Person, DutyRole, Image, PhoneNumber, Location, PersonDetail
 from flasgger import swag_from
 from sqlalchemy.orm import aliased
 from datetime import datetime
@@ -20,12 +20,11 @@ def get_profile():
     person = Person.query.filter_by(person_id=person_id).first()
 
     if person:
-        member = Person.query.filter(
-            Person.person_id == person_id)\
-            .join(Image, Person.person_id == Image.person_id, isouter=True).join(Person.dutyroles, isouter=True).first()
             # .join(PhoneNumber, Person.person_id == PhoneNumber.person_id, isouter=True)\
             # .join(Location, Person.person_id == Location.person_id, isouter=True)\
-            
+        member = PersonDetail.query.join(
+            Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
+            .filter(PersonDetail.person_id == person.person_id).first()
 
         if member:
             duties = []
@@ -81,7 +80,23 @@ def get_profile():
                             # 'locations': locations,
                             }), HTTP_200_OK
         else:
-            return jsonify({'error': 'person not found'}), HTTP_404_NOT_FOUND
+            return jsonify({'person_id': person.person_id,
+                            "name": None,
+                            'nickname': None,
+                            'first_name': None,
+                            'last_name': None,
+                            'gender': None,
+                            'email': person.email,
+                            'date_of_birth': None,
+                            'created_date': person.created_date.isoformat(),
+                            "duties": [],
+                            'profile_image': None,
+                            'phone_number': None,
+                            'nationality': None,
+                            'address': None,
+                            # 'numbers': numbers,
+                            # 'locations': locations,
+                            }), HTTP_200_OK
     else:
         return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
 

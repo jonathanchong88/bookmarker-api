@@ -20,8 +20,8 @@ auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 @auth.post("/register")
 @swag_from('./docs/auth/register.yaml')
 def register():
-    first_name = request.json['first_name']
-    last_name = request.json['last_name']
+    # first_name = request.json['first_name']
+    # last_name = request.json['last_name']
     password = request.json['password']
     email = request.json['email']
 
@@ -45,27 +45,35 @@ def register():
 
     pwd_hash = generate_password_hash(password)
 
-    person = Person(first_name=first_name, last_name=last_name, password=pwd_hash, email=email, status='active', confirmed=False)
+    person = Person(password=pwd_hash, email=email,
+                    person_status_id=2, confirmed=False)
     db.session.add(person)
     db.session.commit()
 
     # Now we'll send the email confirmation link
-    # subject = "Confirm your email"
+    subject = "Confirm your email"
 
-    # token = ts.dumps(person.email, salt='email-confirm-key')
+    token = ts.dumps(person.email, salt='email-confirm-key')
 
-    # confirm_url = url_for(
-    #     'auth.confirm_email',
-    #     token=token,
-    #     _external=True)
+    confirm_url = url_for(
+        'auth.confirm_email',
+        token=token,
+        _external=True)
 
-    # html = render_template(
-    #     'email/activate.html',
-    #     confirm_url=confirm_url)
+    html = render_template(
+        'email/activate.html',
+        confirm_url=confirm_url)
 
-    # # We'll assume that send_email has been defined in myapp/util.py
-    # send_email(person.email, subject, html)
-   
+    # We'll assume that send_email has been defined in myapp/util.py
+    status = send_email(person.email, subject, html)
+
+    if status is False:
+        db.session.delete(person)
+        db.session.commit()
+        return jsonify({
+            'error': 'Unable to create account. Please contact your administrator.'
+
+        }), HTTP_409_CONFLICT
     # flash('A confirmation email has been sent via email.', 'success')
 
     return jsonify({
@@ -87,10 +95,19 @@ def login():
 
     person = Person.query.filter_by(email=email).first()
 
+    print(person.email)
+
     if person:
+        
         is_pass_correct = check_password_hash(person.password, password)
 
         if is_pass_correct:
+
+            print(person.confirmed)
+
+            if person.confirmed is False:
+                return jsonify({'error': 'Account not email comfirmed yet.'}), HTTP_401_UNAUTHORIZED
+
             expires = datetime.timedelta(minutes=60)
             refresh = create_refresh_token(identity=person.person_id)
             access = create_access_token(
@@ -122,16 +139,16 @@ def login():
 @auth.post("/social/login")
 # @swag_from('./docs/auth/register.yaml')
 def social_login():
-    first_name = request.json['first_name']
-    last_name = request.json['last_name']
+    # first_name = request.json['first_name']
+    # last_name = request.json['last_name']
     password = request.json['password']
     email = request.json['email']
     fcmToken = request.json['fcm_token']
 
     pwd_hash = generate_password_hash(password)
 
-    person = Person(first_name=first_name, last_name=last_name,
-                    password=pwd_hash, email=email, fcm_token=fcmToken,status='active', confirmed=True)
+    person = Person(password=pwd_hash, email=email,
+                    person_status_id=2,fcm_token=fcmToken, confirmed=true)
     db.session.add(person)
     db.session.commit()
 
@@ -205,13 +222,17 @@ def confirm_email(token):
 
     person = Person.query.filter_by(email=email).first_or_404()
 
+    if person.confirmed:
+        return render_template(
+            'email/invalid_activate.html')
+
     person.confirmed = True
 
     db.session.add(person)
     db.session.commit()
 
     return render_template(
-        'login.html')
+        'email/success_activate.html')
 
 
 @auth.post('/forgot')
