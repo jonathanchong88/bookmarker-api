@@ -61,6 +61,9 @@ def get_profile():
                  
                 # generate_download_signed_url_v4(
                 #     member.image[0].bucket_name, member.image[0].file_name)
+            dob = None
+            if member.date_of_birth:
+                dob = member.date_of_birth.isoformat()
 
             return jsonify({'person_id': member.person_id,
                             "name": member.first_name + ' ' + member.last_name,
@@ -68,8 +71,8 @@ def get_profile():
                             'first_name': member.first_name,
                             'last_name': member.last_name,
                             'gender': member.gender,
-                            'email': member.email,
-                            'date_of_birth': member.date_of_birth.isoformat(),
+                            'email': person.email, 
+                            'date_of_birth': dob ,
                             'created_date': member.created_date.isoformat(),
                             "duties": duties,
                             'profile_image': image_url,
@@ -141,20 +144,28 @@ def update_profile():
         bucket_name = 'jonathan_bucket_1'
         file_name = request.get_json().get('file_name', '')
 
-        person.first_name = first_name
-        person.last_name = last_name
-        person.nickname = nickname
-        person.genders = gender
-        person.date_of_birth = dob
-        person.phone_number = phone_number
-        person.nationality = nationality
-        person.address = address
-        person.updated_date = datetime.now()
+        member = PersonDetail.query.filter_by(person_id=person_id).first()
+
+        if member:
+            member.first_name = first_name
+            member.last_name = last_name
+            member.nickname = nickname
+            member.gender = gender
+            member.date_of_birth = dob
+            member.phone_number = phone_number
+            member.nationality = nationality
+            member.address = address
+            member.updated_date = datetime.now()
+        else:
+        #create Person Detail record
+            member = PersonDetail(first_name=first_name, last_name=last_name, nickname=nickname, gender=gender,
+                                  address=address, date_of_birth=dob, nationality=nationality, person_id=person_id)
+        db.session.add(member)
         db.session.commit()
 
         if file_name:
 
-            image = Image.query.filter_by(person_id=person_id).first()
+            image = Image.query.filter_by(person_detail_id=member.person_detail_id).first()
 
             if image:
                 old_image = image.file_name
@@ -165,8 +176,10 @@ def update_profile():
                 delete_blob(bucket_name, old_image)
                 
             else:
-                person_new = Person(file_name=file_name, bucket_name=bucket_name, person_id=person_id,)
-                db.session.add(person_new)
+                #create image record
+                image_new = Image(
+                    file_name=file_name, bucket_name=bucket_name, person_detail_id=member.person_detail_id)
+                db.session.add(image_new)
                 db.session.commit()
 
         return jsonify({

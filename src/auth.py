@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, url_for, render_template, redirect, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 import validators
-from src.database2 import Person, db, person_schema, persons_schema
+from src.database2 import Person, db, person_schema, persons_schema, PersonDetail
 # from src.database import User, db, user_schema, users_schema
 from src.constant.http_status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
@@ -108,6 +108,11 @@ def login():
             if person.confirmed is False:
                 return jsonify({'error': 'Account not email comfirmed yet.'}), HTTP_401_UNAUTHORIZED
 
+            # person_detail = PersonDetail.query.filter_by(PersonDetail.person_id=person.persson_id).first()
+
+            # if person_detail is None:
+            #     return jsonify({'error': 'Account not approved by administrator yet.'}), HTTP_401_UNAUTHORIZED
+
             expires = datetime.timedelta(minutes=60)
             refresh = create_refresh_token(identity=person.person_id)
             access = create_access_token(
@@ -128,7 +133,7 @@ def login():
                 'data': {
                     'refresh': refresh,
                     'access': access,
-                    'email': person.email
+                    'email': person.email,
                 }
 
             }), HTTP_200_OK
