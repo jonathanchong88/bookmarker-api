@@ -95,9 +95,8 @@ def login():
 
     person = Person.query.filter_by(email=email).first()
 
-    print(person.email)
-
     if person:
+        print(person.email)
         
         is_pass_correct = check_password_hash(person.password, password)
 
