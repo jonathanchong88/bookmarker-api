@@ -4,7 +4,7 @@
         "details": [
             {
                 "appID": "843ZRS4576.com.lcms-blk",
-                "paths": [ "/wwdc/news/""]
+                "paths": [ "*"]
             }
         ]
     }
