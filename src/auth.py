@@ -173,6 +173,23 @@ def social_login():
     }), HTTP_200_OK
 
 
+@auth.get("/apple/deeplink")
+def apple_deeplink():
+    return jsonify({
+        "applinks": {
+            "apps": [],
+            "details": [
+                {
+                    "appID": "843ZRS4576.com.lcms-blk",
+                    "paths": ["/wwdc/news/""]
+                }
+            ]
+        }
+    }), HTTP_200_OK
+
+
+
+
 @auth.get("/me")
 @jwt_required()
 def me():
