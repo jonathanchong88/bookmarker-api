@@ -181,7 +181,7 @@ def apple_deeplink():
             "details": [
                 {
                     "appID": "843ZRS4576.com.lcms-blk",
-                    "paths": ["/wwdc/news/""]
+                    "paths": ["/wwdc/news/"]
                 }
             ]
         }
