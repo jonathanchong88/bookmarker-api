@@ -139,7 +139,7 @@ def edit_song(id):
                 upload_blob(bucket_name, image['dataURL'], image['name'])
                 # update to db
                 song.image.append(Image(
-                    file_name=image['name'], bucket_name='jonathan_bucket_1', item_id=id, created_date=datetime.now(), updated_date=datetime.now()))
+                    file_name=image['name'], bucket_name='jonathan_bucket_1', song_id=id, created_date=datetime.now(), updated_date=datetime.now()))
 
         # Update Database
         db.session.add(song)
