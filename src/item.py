@@ -36,10 +36,12 @@ def get_items():
                 print(item.created_date)
                 image = []
                 for image_item in item.image:
+                    bucket_name = cors_configuration(image_item.bucket_name)
+                    image_url = generate_download_signed_url_v4(
+                        bucket_name, image_item.file_name)
                     image.append({
-                        # bucket_name=cors_configuration(image_item.bucket_name)
-                        # generate_download_signed_url_v4(bucket_name, image_item.file_name)
-                        'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
+                        'image_url': image_url
+                        # 'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
                     })
 
                 data.append({
@@ -85,10 +87,12 @@ def get_item():
             # print(item.created_date)
             image = []
             for image_item in item.image:
+                bucket_name=cors_configuration(image_item.bucket_name)
+                image_url = generate_download_signed_url_v4(bucket_name, image_item.file_name)
                 image.append({
-                    # bucket_name=cors_configuration(image_item.bucket_name)
-                    # generate_download_signed_url_v4(bucket_name, image_item.file_name)
-                    'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
+                    
+                    'image_url': image_url
+                    # 'image_url': 'https://d626yq9e83zk1.cloudfront.net/files/share-odb-2020-01-01.jpg'
                 })
 
             #generate deep link url for

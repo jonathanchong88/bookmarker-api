@@ -131,6 +131,8 @@ def create_app(test_config=None):
         folder = os.path.join(basedir,
                               app.config['UPLOAD_FOLDER'])
 
+        count = len(os.listdir(folder))
+
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -141,7 +143,7 @@ def create_app(test_config=None):
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
         
-        return jsonify({'success': 'clear'}), HTTP_200_OK
+        return jsonify({'success': 'clear', 'count': count}), HTTP_200_OK
 
 
     @app.route('/upload', methods=['POST', 'GET'])
