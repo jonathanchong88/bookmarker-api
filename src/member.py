@@ -17,20 +17,29 @@ def get_members():
     person_id = get_jwt_identity()
 
     person = Person.query.filter_by(person_id=person_id).first()
-    group_id = request.args.get('id', 4, type=int)
+    group_id = request.args.get('id', type=int)
     
-
     if person:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 5, type=int)
 
-        member_list = PersonDetail.query.join(
-            Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
-            .join(Person)\
-            .filter(Person.person_status_id==1)\
-            .filter(PersonDetail.group.any(Churchgroup.group_id ==group_id))\
-            .order_by(PersonDetail.last_name).paginate(
-            page=page, per_page=per_page)
+        if group_id == 4:
+            member_list = PersonDetail.query.join(
+                Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
+                .join(Person)\
+                .filter(Person.person_status_id == 1)\
+                .order_by(PersonDetail.last_name).paginate(
+                page=page, per_page=per_page)
+        else:
+            member_list = PersonDetail.query.join(
+                Image, Image.person_detail_id == PersonDetail.person_detail_id, isouter=True)\
+                .join(Person)\
+                .filter(Person.person_status_id == 1)\
+                .filter(PersonDetail.group.any(Churchgroup.group_id == group_id))\
+                .order_by(PersonDetail.last_name).paginate(
+                page=page, per_page=per_page)
+
+        
         if member_list:
             data = []
             for member in member_list.items:
