@@ -149,12 +149,15 @@ def social_login():
     email = request.json['email']
     fcmToken = request.json['fcm_token']
 
-    pwd_hash = generate_password_hash(password)
+    person = Person.query.filter_by(email=email).first()
 
-    person = Person(password=pwd_hash, email=email,
-                    person_status_id=2,fcm_token=fcmToken, confirmed=true)
-    db.session.add(person)
-    db.session.commit()
+    if person is None:
+        pwd_hash = generate_password_hash(password)
+
+        person = Person(password=pwd_hash, email=email,
+                        person_status_id=2,fcm_token=fcmToken, confirmed=True)
+        db.session.add(person)
+        db.session.commit()
 
     expires = datetime.timedelta(minutes=60)
     refresh = create_refresh_token(identity=person.person_id)
