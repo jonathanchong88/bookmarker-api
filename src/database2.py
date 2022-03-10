@@ -42,6 +42,7 @@ class Person(db.Model, UserMixin):
     updated_date = db.Column(db.DateTime, default=datetime.now())
     confirmed = db.Column(db.Boolean)
     otp_secret = db.Column(db.String(50))
+    language = db.Column(db.Integer)
     person_status_id = db.Column(db.Integer, db.ForeignKey('person_status.person_status_id'))
     person_detail = db.relationship("PersonDetail", backref="person")
     # phonenumber = db.relationship("PhoneNumber", backref="person")

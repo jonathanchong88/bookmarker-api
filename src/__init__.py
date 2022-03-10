@@ -19,6 +19,7 @@ from src.website.webAuth import webAuth
 from src.website.views import views
 from flask_login import LoginManager
 from src.post import webpost
+from src.setting import setting
 from src.activity import webactivity
 from src.webprogram import webprogram
 from src.zhouxun import webzhouxun
@@ -80,6 +81,7 @@ def create_app(test_config=None):
     app.register_blueprint(webmember)
     app.register_blueprint(webdutyrole)
     app.register_blueprint(webprivacy)
+    app.register_blueprint(setting)
     # ma.app = app
     ma.init_app(app)
     ckeditor = CKEditor(app)
